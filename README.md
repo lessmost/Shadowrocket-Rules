@@ -27,6 +27,9 @@
      `https://raw.githubusercontent.com/lessmost/Shadowrocket-Rules/refs/heads/main/Shadowrocket-no-hijack-dns.conf`
    - 系统 DNS / B 站兼容版：
      `https://raw.githubusercontent.com/lessmost/Shadowrocket-Rules/refs/heads/main/Shadowrocket-system-dns.conf`
+   - DNS 劫持 / 阿里 DNS 版（主 DNS `223.5.5.5`，备用 `223.6.6.6`）：
+     `https://raw.githubusercontent.com/lessmost/Shadowrocket-Rules/refs/heads/main/Shadowrocket-alidns.conf`
+     保留直连域名及 `[Host]` 的系统 DNS 设置，此版本仅替换默认主、备用 DNS。
 2. 打开 Shadowrocket → 配置 → 右上角 `+` → 粘贴链接 → 下载
 3. 点击已下载的配置，设为使用中（✔️）
 4. 首页添加你自己的节点或订阅
