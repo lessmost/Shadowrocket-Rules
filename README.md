@@ -7,7 +7,7 @@
 | 服务 | 默认策略 | 可选策略 |
 |------|----------|----------|
 | 🧱 DNS 防泄露 | REJECT | 节点选择、DIRECT |
-| 📧 邮件服务 | PROXY | DIRECT、节点选择、日本节点、香港节点 |
+| 📧 邮件服务 | 常见邮件端点 PROXY；Fastmail IMAP/SMTP DIRECT | DIRECT、节点选择、日本节点、香港节点 |
 | 🔍 谷歌服务 | 🇯🇵 日本节点 | 🇭🇰 香港节点、节点选择、PROXY、DIRECT |
 | 🤖 AI 服务 | 🇸🇬 新加坡节点 | 节点选择、PROXY、DIRECT |
 | 🍎 苹果推送 | 🚀 节点选择 | PROXY、DIRECT |
@@ -42,7 +42,7 @@
 | 优先级 | 服务 | 默认策略 |
 |--------|------|----------|
 | 1 | 🧱 DNS 防泄露（HTTPDNS） | REJECT |
-| 2 | 📧 邮件服务（IMAP / POP3 / SMTP） | PROXY，可切换 DIRECT 或地区节点 |
+| 2 | 📧 邮件服务（Fastmail IMAP / SMTP 优先 DIRECT；其他 IMAP / POP3 / SMTP） | 其他邮件端点 PROXY，可切换 DIRECT 或地区节点 |
 | 3 | 🔍 谷歌服务（含 Gemini） | 日本节点，可手动切香港节点 |
 | 4 | 🤖 AI 服务（ChatGPT、Claude 等） | 新加坡节点 |
 | 5 | 📹 油管视频（含 YouTube 翻译 API） | 节点选择 |
@@ -66,6 +66,7 @@
 - [blackmatrix7/ios_rule_script](https://github.com/blackmatrix7/ios_rule_script) — 主要规则集
 - [iab0x00/ProxyRules](https://github.com/iab0x00/ProxyRules) — AI 服务补充规则
 - `Mail.list` 收录 Apple、Gmail、Outlook、Yahoo、Yandex 的邮件协议端点
+- 三个主配置将 `imap.fastmail.com` 与 `smtp.fastmail.com` 优先设为 DIRECT，供邮件客户端直连 Fastmail
 - `Apple.list` 基于 blackmatrix7 Apple 规则，并配套加载 `Apple_Domain.list`，补充 iCloud Photos / Apple CDN 直连域名
 - `HK_Broker.list` 补充富途 / moomoo / 长桥 / 老虎 / 雪盈 / 盈透 / TradeUP / Schwab 证券域名及交易 IP 段
 - `HSBC_HK.list` 与 `HK_Banks_Direct.list` 收录香港银行网站及 App 服务域名
@@ -81,6 +82,8 @@
 - 新增 `Mail.list`
    - 精确收录常见 IMAP、POP3 与 SMTP 服务端点
    - 默认使用 PROXY，可手动切换 DIRECT 或地区节点
+- Fastmail 邮件客户端
+   - IMAP 与 SMTP 端点固定直连，避免受通用邮件代理策略影响
 - 新增 `HK_Broker.list`
    - 补充富途 / moomoo / 长桥券商域名
    - 合并老虎证券域名，不再依赖外部券商规则
@@ -108,7 +111,7 @@
 - DNS：代理域名使用经代理转发的 Cloudflare / Google DoH，直连域名使用系统 DNS
 - DNS 劫持：拦截常见硬编码 53 端口 DNS，防止应用绕过规则
 - HTTPDNS 拦截：引用 blackmatrix7 `BlockHttpDNS`，阻止 App 通过内置 HTTPDNS 绕过系统解析
-- 邮件分流：常见邮件协议端点默认使用 PROXY，可按网络情况切换直连或地区节点
+- 邮件分流：Fastmail 的 IMAP / SMTP 端点固定 DIRECT，其余常见邮件协议端点默认使用 PROXY，可按网络情况切换直连或地区节点
 - QUIC 屏蔽：对代理连接屏蔽 UDP/443，强制回退 HTTP/2
 - 本地服务保护：`localhost.weixin.qq.com` 固定解析到 `127.0.0.1` 并强制直连，避免 fake-IP 影响微信本地回调
 - TUN 直连优化：iCloud Photos / CloudKit / Apple CDN 域名使用系统 DNS 并跳过代理，保留 Apple Push 走代理
