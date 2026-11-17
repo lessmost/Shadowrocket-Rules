@@ -37,6 +37,36 @@
 
 <img width="200" height="200" alt="ctool-2026-02-26-17-13-16" src="https://github.com/user-attachments/assets/22f1b4f7-3265-493c-9e5a-2b662924ed2f" />
 
+## Clash Verge Rev / Mihomo（macOS）
+
+`Clash-Verge-Rev.yaml` 是由 `Shadowrocket.conf` 自动转换的 Mihomo 配置，策略组、默认出口和规则顺序与 Shadowrocket 版一致。
+
+`https://raw.githubusercontent.com/lessmost/Shadowrocket-Rules/refs/heads/main/Clash-Verge-Rev.yaml`
+
+使用步骤：
+
+1. 下载这个文件，把 `proxy-providers.my-subscription.url` 的示例地址换成自己的节点订阅链接（订阅需能返回 Clash/Mihomo 格式节点）。
+2. 在 Clash Verge Rev 的「订阅」页面导入这个本地文件。不要直接用 Raw 链接远程导入，否则每次更新都会把订阅链接覆盖回示例地址。
+3. 启用该配置，等节点和规则集下载完成后，打开系统代理或 TUN 模式。
+4. 打开 TUN 后，检查国内网站、Google、AI 服务、Fastmail 和局域网设备的出口是否符合预期。
+
+与 Shadowrocket 版的差异：
+
+- 没有转换 URL Rewrite（`google.cn` 跳转）和 MITM。
+- 规则列表里的 `USER-AGENT`、`URL-REGEX` 行会被 Mihomo 跳过并在日志中提示，其余规则照常生效。
+- blackmatrix7 规则集改用其 `rule/Clash/` 目录下的同名 Mihomo 格式版本。
+- `block-quic = all-proxy` 的近似实现：在默认走代理的规则前拒绝 UDP/443。把某个分组手动切到 DIRECT 后，该分组的 QUIC 仍会被拒绝，应用会回退到 HTTP/2。
+- 地区组没有匹配节点时拒绝连接，避免流量悄悄直连。地区正则与 Shadowrocket 相同且区分大小写，例如大写的 `RUSSIA` 会被 `US` 匹配进美国节点组。
+- 订阅节点统一按支持 UDP 处理，对应 `udp-policy-not-supported-behaviour = REJECT`：不支持 UDP 的节点上 UDP 会失败，不会改走直连。
+
+修改 `Shadowrocket.conf` 后重新生成：
+
+```bash
+ruby scripts/build-mihomo-config.rb          # 重写 Clash-Verge-Rev.yaml
+ruby scripts/build-mihomo-config.rb --check  # 检查是否需要重新生成
+ruby scripts/test_build_mihomo_config.rb     # 运行转换测试
+```
+
 ## 分流规则
 
 | 优先级 | 服务 | 默认策略 |
